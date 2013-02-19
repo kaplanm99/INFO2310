@@ -26,7 +26,17 @@ class User < ActiveRecord::Base
   end
   
   def self.authenticate(email, plain_text_password)
-    #user = User.where("email = ? AND hashed_password = ?", params[:email], encrypt(plain_text_password))
-	nil
+    results = User.where("email = :email", {:email => email})
+    if results == []
+        return nil
+    else
+        results.each do |item|
+            if Digest::SHA256.hexdigest("--#{item.salt}--#{plain_text_password}--") == item.hashed_password
+                return item
+            end
+        end
+        
+        return nil
+    end
   end
 end
