@@ -1,4 +1,7 @@
 class MicroPostsController < ApplicationController
+  
+  before_filter :redirect_unless_authorized, only: [:edit, :update, :destroy]
+  
   # GET /micro_posts
   # GET /micro_posts.json
   def index
@@ -40,24 +43,24 @@ class MicroPostsController < ApplicationController
   # POST /micro_posts
   # POST /micro_posts.json
   def create
-    @micro_post = MicroPost.new(params[:micro_post])
+		@micro_post = current_user.micro_posts.build(params[:micro_post])
 
-    respond_to do |format|
-      if @micro_post.save
-        format.html { redirect_to @micro_post, notice: 'Micro post was successfully created.' }
-        format.json { render json: @micro_post, status: :created, location: @micro_post }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @micro_post.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+		respond_to do |format|
+			if @micro_post.save
+				format.html { redirect_to @micro_post, notice: 'Micro post was successfully created.' }
+				format.json { render json: @micro_post, status: :created, location: @micro_post }
+				format.js { render :partial => "micro_posts/show"  }
+			else
+				format.html { render action: "new" }
+				format.json { render json: @micro_post.errors, status: :unprocessable_entity }
+				format.js { render :partial => "micro_posts/errors"  }
+			end
+		end
+	end
 
   # PUT /micro_posts/1
   # PUT /micro_posts/1.json
   def update
-    @micro_post = MicroPost.find(params[:id])
-
     respond_to do |format|
       if @micro_post.update_attributes(params[:micro_post])
         format.html { redirect_to @micro_post, notice: 'Micro post was successfully updated.' }
@@ -72,12 +75,24 @@ class MicroPostsController < ApplicationController
   # DELETE /micro_posts/1
   # DELETE /micro_posts/1.json
   def destroy
-    @micro_post = MicroPost.find(params[:id])
-    @micro_post.destroy
+		@micro_post = MicroPost.find(params[:id])
+		@micro_post.destroy
 
-    respond_to do |format|
-      format.html { redirect_to micro_posts_url }
-      format.json { head :no_content }
-    end
-  end
+		respond_to do |format|
+			format.html { redirect_to micro_posts_url }
+			format.json { head :no_content }
+			format.js { render partial: 'micro_posts/destroy' }
+		end
+	end	
+  
+  private 
+    def redirect_unless_authorized
+		@micro_post = MicroPost.find(params[:id])
+
+		unless signed_in? && current_user == @micro_post.user
+			flash[:error] = "You are not authorized to edit that MicroPost"
+			redirect_to root_path
+		end
+
+	end	
 end

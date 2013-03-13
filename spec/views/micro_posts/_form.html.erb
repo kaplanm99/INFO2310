@@ -1,4 +1,4 @@
-<%= form_for(@micro_post, remote: true) do |f| %>
+<%= form_for(@micro_post) do |f| %>
   <% if @micro_post.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@micro_post.errors.count, "error") %> prohibited this micro_post from being saved:</h2>

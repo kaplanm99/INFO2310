@@ -4,11 +4,12 @@
    </span> 
    <%= micro_post.content %>
    
-   <% if signed_in? && current_user == micro_post.user %>
-     <%= link_to 'Destroy', micro_post, 
-							method: :delete, 
-							data: { confirm: 'Are you sure?' },
-							remote: true %>
+   <% if signed_in? && micro_post.user == current_user %>
+	   <%= link_to 'Destroy', 
+					micro_post, 
+					method: :delete, 
+					data: { confirm: 'Are you sure?' },
+					remote: true %>
    <% end %>
    
 </p>
