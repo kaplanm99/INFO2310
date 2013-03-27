@@ -1,12 +1,14 @@
 Info2310::Application.routes.draw do
+  get '/micro_posts/refresh'  # this must come first
   resources :micro_posts
   resources :users
   resources :sessions, only: [:new, :create, :destroy]
-
+  resources :relationships, only: [:create, :destroy]
 
   get "static_pages/home"
   get "static_pages/help"
   get "static_pages/about"
+  
 
   root to: 'static_pages#home'
   
