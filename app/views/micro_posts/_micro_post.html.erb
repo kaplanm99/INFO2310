@@ -1,4 +1,5 @@
 <p id="micro_post_<%= micro_post.id %>">
+  <%= image_tag(micro_post.user.avatar_url(:thumbnail)) if micro_post.user.avatar_url %>
   <span class='micro_post_timestamp'>
      <%= micro_post.created_at.strftime("%m/%d %l-%M") %>
    </span> 
